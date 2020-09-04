@@ -8,11 +8,13 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { CaretRight24, CaretLeft24 } from '@carbon/icons-react';
+import { CaretRight16, CaretLeft16 } from '@carbon/icons-react';
 import { settings } from 'carbon-components';
 import Select from '../Select';
 import SelectItem from '../SelectItem';
 import { equals } from '../../tools/array';
+import Button from '../Button';
+import deprecate from '../../prop-types/deprecate';
 
 const { prefix } = settings;
 
@@ -45,10 +47,9 @@ export default class Pagination extends Component {
     className: PropTypes.string,
 
     /**
-     * The function returning a translatable text showing where the current page is,
-     * in a manner of the range of items.
+     * `true` if the backward/forward buttons, as well as the page select elements,  should be disabled.
      */
-    itemRangeText: PropTypes.func,
+    disabled: PropTypes.bool,
 
     /**
      * The description for the forward icon.
@@ -60,10 +61,17 @@ export default class Pagination extends Component {
      */
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
+    // TODO: remove when v9 is deprecated
     /**
-     * The translatable text indicating the number of items per page.
+     * `true` if the current page should be the last page.
      */
-    itemsPerPageText: PropTypes.string,
+    isLastPage: PropTypes.bool,
+
+    /**
+     * The function returning a translatable text showing where the current page is,
+     * in a manner of the range of items.
+     */
+    itemRangeText: PropTypes.func,
 
     /**
      * A variant of `itemRangeText`, used if the total number of items is unknown.
@@ -71,9 +79,27 @@ export default class Pagination extends Component {
     itemText: PropTypes.func,
 
     /**
+     * The translatable text indicating the number of items per page.
+     */
+    itemsPerPageText: PropTypes.string,
+
+    /**
      * The callback function called when the current page changes.
      */
     onChange: PropTypes.func,
+
+    /**
+     * The current page.
+     */
+    page: PropTypes.number,
+
+    /**
+     * Deprecated; `true` if the select box to change the page should be disabled.
+     */
+    pageInputDisabled: deprecate(
+      PropTypes.bool,
+      `The prop \`pageInputDisabled\` for Pagination has been deprecated, as the feature of \`pageInputDisabled\` has been combined with the general \`disabled\` prop.`
+    ),
 
     pageNumberText: PropTypes.string,
 
@@ -83,9 +109,9 @@ export default class Pagination extends Component {
     pageRangeText: PropTypes.func,
 
     /**
-     * The translatable text showing the current page.
+     * The number dictating how many items a page contains.
      */
-    pageText: PropTypes.func,
+    pageSize: PropTypes.number,
 
     /**
      * The choices for `pageSize`.
@@ -93,40 +119,19 @@ export default class Pagination extends Component {
     pageSizes: PropTypes.arrayOf(PropTypes.number).isRequired,
 
     /**
-     * The total number of items.
+     * The translatable text showing the current page.
      */
-    totalItems: PropTypes.number,
-
-    /**
-     * `true` if the backward/forward buttons should be disabled.
-     */
-    disabled: PropTypes.bool,
-
-    /**
-     * The current page.
-     */
-    page: PropTypes.number,
-
-    /**
-     * The number dictating how many items a page contains.
-     */
-    pageSize: PropTypes.number,
+    pageText: PropTypes.func,
 
     /**
      * `true` if the total number of items is unknown.
      */
     pagesUnknown: PropTypes.bool,
 
-    // TODO: remove when v9 is deprecated
     /**
-     * `true` if the current page should be the last page.
+     * The total number of items.
      */
-    isLastPage: PropTypes.bool,
-
-    /**
-     * `true` if the select box to change the page should be disabled.
-     */
-    pageInputDisabled: PropTypes.bool,
+    totalItems: PropTypes.number,
   };
 
   static defaultProps = {
@@ -135,14 +140,14 @@ export default class Pagination extends Component {
     forwardText: 'Next page',
     itemsPerPageText: 'Items per page:',
     pageNumberText: 'Page Number',
-    pageRangeText: (current, total) => `of ${total} pages`,
+    pageRangeText: (current, total) =>
+      `of ${total} ${total === 1 ? 'page' : 'pages'}`,
     disabled: false,
     page: 1,
     pagesUnknown: false,
     isLastPage: false,
-    pageInputDisabled: false,
     itemText: (min, max) => `${min}–${max} items`,
-    pageText: page => `page ${page}`,
+    pageText: (page) => `page ${page}`,
   };
 
   static getDerivedStateFromProps({ pageSizes, page, pageSize }, state) {
@@ -170,17 +175,17 @@ export default class Pagination extends Component {
         };
   }
 
-  handleSizeChange = evt => {
+  handleSizeChange = (evt) => {
     const pageSize = Number(evt.target.value);
     this.setState({ pageSize, page: 1 });
     this.props.onChange({ page: 1, pageSize });
   };
 
-  handlePageChange = evt => {
+  handlePageChange = (evt) => {
     this.setState({ page: evt.target.value });
   };
 
-  handlePageInputChange = evt => {
+  handlePageInputChange = (evt) => {
     const page = Number(evt.target.value);
     if (
       page > 0 &&
@@ -188,7 +193,10 @@ export default class Pagination extends Component {
         Math.max(Math.ceil(this.props.totalItems / this.state.pageSize), 1)
     ) {
       this.setState({ page });
-      this.props.onChange({ page, pageSize: this.state.pageSize });
+      this.props.onChange({
+        page,
+        pageSize: this.state.pageSize,
+      });
     }
   };
 
@@ -204,7 +212,7 @@ export default class Pagination extends Component {
     this.props.onChange({ page, pageSize: this.state.pageSize });
   };
 
-  renderSelectItems = total => {
+  renderSelectItems = (total) => {
     let counter = 1;
     let itemArr = [];
     while (counter <= total) {
@@ -232,6 +240,7 @@ export default class Pagination extends Component {
       pageNumberText, // eslint-disable-line no-unused-vars
       pagesUnknown,
       isLastPage,
+      disabled,
       pageInputDisabled,
       totalItems,
       onChange, // eslint-disable-line no-unused-vars
@@ -243,7 +252,7 @@ export default class Pagination extends Component {
     const inputId = id || this.uniqueId;
     const { page: statePage, pageSize: statePageSize } = this.state;
     const totalPages = Math.max(Math.ceil(totalItems / statePageSize), 1);
-    const backButtonDisabled = this.props.disabled || statePage === 1;
+    const backButtonDisabled = disabled || statePage === 1;
     const backButtonClasses = classnames(
       `${prefix}--pagination__button`,
       `${prefix}--pagination__button--backward`,
@@ -251,8 +260,7 @@ export default class Pagination extends Component {
         [`${prefix}--pagination__button--no-index`]: backButtonDisabled,
       }
     );
-    const forwardButtonDisabled =
-      this.props.disabled || statePage === totalPages;
+    const forwardButtonDisabled = disabled || statePage === totalPages;
     const forwardButtonClasses = classnames(
       `${prefix}--pagination__button`,
       `${prefix}--pagination__button--forward`,
@@ -278,12 +286,14 @@ export default class Pagination extends Component {
             noLabel
             inline
             onChange={this.handleSizeChange}
+            disabled={pageInputDisabled || disabled}
             value={statePageSize}>
-            {pageSizes.map(size => (
+            {pageSizes.map((size) => (
               <SelectItem key={size} value={size} text={String(size)} />
             ))}
           </Select>
-          <span className={`${prefix}--pagination__text`}>
+          <span
+            className={`${prefix}--pagination__text ${prefix}--pagination__items-count`}>
             {pagesUnknown
               ? itemText(
                   statePageSize * (statePage - 1) + 1,
@@ -305,7 +315,7 @@ export default class Pagination extends Component {
             hideLabel
             onChange={this.handlePageInputChange}
             value={statePage}
-            disabled={pageInputDisabled}>
+            disabled={pageInputDisabled || disabled}>
             {selectItems}
           </Select>
           <span className={`${prefix}--pagination__text`}>
@@ -313,22 +323,30 @@ export default class Pagination extends Component {
               ? pageText(statePage)
               : pageRangeText(statePage, totalPages)}
           </span>
-          <button
-            type="button"
-            className={backButtonClasses}
-            onClick={this.decrementPage}
-            aria-label={backwardText}
-            disabled={backButtonDisabled}>
-            <CaretLeft24 />
-          </button>
-          <button
-            type="button"
-            className={forwardButtonClasses}
-            aria-label={forwardText}
-            onClick={this.incrementPage}
-            disabled={forwardButtonDisabled || isLastPage}>
-            <CaretRight24 />
-          </button>
+          <div className={`${prefix}--pagination__control-buttons`}>
+            <Button
+              kind="ghost"
+              className={backButtonClasses}
+              hasIconOnly
+              renderIcon={CaretLeft16}
+              iconDescription={backwardText}
+              tooltipAlignment="center"
+              tooltipPosition="top"
+              onClick={this.decrementPage}
+              disabled={backButtonDisabled}
+            />
+            <Button
+              kind="ghost"
+              className={forwardButtonClasses}
+              hasIconOnly
+              renderIcon={CaretRight16}
+              iconDescription={forwardText}
+              tooltipAlignment="end"
+              tooltipPosition="top"
+              onClick={this.incrementPage}
+              disabled={forwardButtonDisabled || isLastPage}
+            />
+          </div>
         </div>
       </div>
     );

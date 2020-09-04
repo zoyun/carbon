@@ -12,12 +12,15 @@ const path = require('path');
 
 async function scaffold() {
   await Metadata.scaffold({
-    input: path.resolve(__dirname, '../'),
+    input: {
+      svg: path.resolve(__dirname, '../src/svg'),
+      extensions: path.resolve(__dirname, '../'),
+    },
     extensions: [Metadata.extensions.pictograms],
   });
 }
 
-scaffold().catch(error => {
+scaffold().catch((error) => {
   console.log(error);
   process.exit(1);
 });

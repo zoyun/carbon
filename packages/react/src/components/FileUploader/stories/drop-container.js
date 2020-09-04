@@ -14,12 +14,12 @@ import uid from '../../../tools/uniqueId';
 
 const { prefix } = settings;
 
-function ExampleDropContainerApp(props) {
+const ExampleDropContainerApp = (props) => {
   const [files, setFiles] = useState([]);
-  const handleDrop = e => {
+  const handleDrop = (e) => {
     e.preventDefault();
   };
-  const handleDragover = e => {
+  const handleDragover = (e) => {
     e.preventDefault();
   };
   useEffect(() => {
@@ -30,7 +30,7 @@ function ExampleDropContainerApp(props) {
       document.removeEventListener('dragover', handleDragover);
     };
   }, []);
-  const uploadFile = async fileToUpload => {
+  const uploadFile = async (fileToUpload) => {
     // file size validation
     if (fileToUpload.filesize > 512000) {
       const updatedFile = {
@@ -41,8 +41,8 @@ function ExampleDropContainerApp(props) {
         errorSubject: 'File size exceeds limit',
         errorBody: '500kb max file size. Select a new file and try again.',
       };
-      setFiles(files =>
-        files.map(file =>
+      setFiles((files) =>
+        files.map((file) =>
           file.uuid === fileToUpload.uuid ? updatedFile : file
         )
       );
@@ -57,8 +57,8 @@ function ExampleDropContainerApp(props) {
         status: 'complete',
         iconDescription: 'Upload complete',
       };
-      setFiles(files =>
-        files.map(file =>
+      setFiles((files) =>
+        files.map((file) =>
           file.uuid === fileToUpload.uuid ? updatedFile : file
         )
       );
@@ -71,8 +71,8 @@ function ExampleDropContainerApp(props) {
         status: 'edit',
         iconDescription: 'Delete file',
       };
-      setFiles(files =>
-        files.map(file =>
+      setFiles((files) =>
+        files.map((file) =>
           file.uuid === fileToUpload.uuid ? updatedFile : file
         )
       );
@@ -81,13 +81,14 @@ function ExampleDropContainerApp(props) {
   const onAddFiles = useCallback(
     (evt, { addedFiles }) => {
       evt.stopPropagation();
-      const newFiles = addedFiles.map(file => ({
+      const newFiles = addedFiles.map((file) => ({
         uuid: uid(),
         name: file.name,
         filesize: file.size,
         status: 'uploading',
         iconDescription: 'Uploading',
       }));
+      // eslint-disable-next-line react/prop-types
       if (props.multiple) {
         setFiles([...files, ...newFiles]);
         newFiles.forEach(uploadFile);
@@ -96,6 +97,7 @@ function ExampleDropContainerApp(props) {
         uploadFile(newFiles[0]);
       }
     },
+    // eslint-disable-next-line react/prop-types
     [files, props.multiple]
   );
   const handleFileUploaderItemClick = useCallback(
@@ -126,6 +128,7 @@ function ExampleDropContainerApp(props) {
               uuid={uuid}
               name={name}
               filesize={filesize}
+              // eslint-disable-next-line react/prop-types
               size={props.size}
               status={status}
               iconDescription={iconDescription}
@@ -138,6 +141,6 @@ function ExampleDropContainerApp(props) {
       </div>
     </FormItem>
   );
-}
+};
 
-export default props => <ExampleDropContainerApp {...props} />;
+export default ExampleDropContainerApp;

@@ -48,17 +48,17 @@ const ToggleSmall = ({
         type="checkbox"
         id={id}
         className={`${prefix}--toggle-input ${prefix}--toggle-input--small`}
-        onChange={evt => {
+        onChange={(evt) => {
           onChange && onChange(evt);
           onToggle(input.checked, id, evt);
         }}
-        ref={el => {
+        ref={(el) => {
           input = el;
         }}
-        onKeyUp={evt => {
+        onKeyUp={(evt) => {
           if (match(evt, keys.Enter)) {
             input.checked = !input.checked;
-            onChange(evt);
+            onChange && onChange(evt);
             onToggle(input.checked, id, evt);
           }
         }}
@@ -89,6 +89,8 @@ const ToggleSmall = ({
 };
 
 ToggleSmall.propTypes = {
+  ['aria-label']: PropTypes.string.isRequired,
+
   /**
    * The CSS class for the toggle
    */
@@ -100,25 +102,9 @@ ToggleSmall.propTypes = {
   defaultToggled: PropTypes.bool,
 
   /**
-   * The event handler for the `onChange` event.
-   */
-  onToggle: PropTypes.func,
-
-  /**
    * The `id` attribute for the toggle
    */
   id: PropTypes.string.isRequired,
-
-  /**
-   * `true` to make it toggled on
-   */
-  toggled: PropTypes.bool,
-
-  /**
-   * The `aria-label` attribute for the toggle
-   */
-  labelText: PropTypes.string,
-  ['aria-label']: PropTypes.string.isRequired,
 
   /**
    * Specify the label for the "off" position
@@ -129,6 +115,25 @@ ToggleSmall.propTypes = {
    * Specify the label for the "on" position
    */
   labelB: PropTypes.string.isRequired,
+
+  /**
+   * The `aria-label` attribute for the toggle
+   */
+  labelText: PropTypes.string,
+  /**
+   * Provide an optional hook that is called when the control is changed
+   */
+  onChange: PropTypes.func,
+
+  /**
+   * The event handler for the `onChange` event.
+   */
+  onToggle: PropTypes.func,
+
+  /**
+   * `true` to make it toggled on
+   */
+  toggled: PropTypes.bool,
 };
 
 ToggleSmall.defaultProps = {

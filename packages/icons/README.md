@@ -55,10 +55,9 @@ In this case, `es` is used for ES2015 modules (ESM), but one may also use `lib`
 for CommonJS or `umd` for UMD modules.
 
 In order to render this to the screen, we'll make use of our
-[`icon-helpers`](../packages/icon-helpers) package. This package gives us two
-options for rendering our icons: `toString` and `toSVG`. If rendering in
-templates, you may want to use the former. If rendering to the DOM, `toSVG` may
-be helpful.
+[`icon-helpers`](../icon-helpers) package. This package gives us two options for
+rendering our icons: `toString` and `toSVG`. If rendering in templates, you may
+want to use the former. If rendering to the DOM, `toSVG` may be helpful.
 
 In our case, we'll use `toSVG` to create a node in the DOM for the 16x16 `add`
 icon:
@@ -89,8 +88,6 @@ svg [data-icon-path='inner-path'] {
   opacity: 1;
 }
 ```
-
-<!-- alex ignore color -->
 
 In the code snippet above, we are targetting the inner path attribute with
 `[data-icon-path="inner-path"]`. The value of `fill` will be the custom color

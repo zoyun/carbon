@@ -7,25 +7,28 @@ import { textInputProps } from './util';
 
 const { prefix } = settings;
 
-export default function PasswordInput({
-  labelText,
-  className,
-  id,
-  placeholder,
-  onChange,
-  onClick,
-  hideLabel,
-  invalid,
-  invalidText,
-  helperText,
-  light,
-  tooltipPosition = 'bottom',
-  tooltipAlignment = 'center',
-  hidePasswordLabel = 'Hide password',
-  showPasswordLabel = 'Show password',
-  size,
-  ...other
-}) {
+const PasswordInput = React.forwardRef(function PasswordInput(
+  {
+    labelText,
+    className,
+    id,
+    placeholder,
+    onChange,
+    onClick,
+    hideLabel,
+    invalid,
+    invalidText,
+    helperText,
+    light,
+    tooltipPosition = 'bottom',
+    tooltipAlignment = 'center',
+    hidePasswordLabel = 'Hide password',
+    showPasswordLabel = 'Show password',
+    size,
+    ...other
+  },
+  ref
+) {
   const [inputType, setInputType] = useState('password');
   const togglePasswordVisibility = () =>
     setInputType(inputType === 'password' ? 'text' : 'password');
@@ -42,12 +45,12 @@ export default function PasswordInput({
   );
   const sharedTextInputProps = {
     id,
-    onChange: evt => {
+    onChange: (evt) => {
       if (!other.disabled) {
         onChange(evt);
       }
     },
-    onClick: evt => {
+    onClick: (evt) => {
       if (!other.disabled) {
         onClick(evt);
       }
@@ -55,6 +58,7 @@ export default function PasswordInput({
     placeholder,
     type: inputType,
     className: textInputClasses,
+    ref,
     ...other,
   };
   const labelClasses = classNames(`${prefix}--label`, {
@@ -115,7 +119,6 @@ export default function PasswordInput({
     <div
       className={`${prefix}--form-item ${prefix}--text-input-wrapper ${prefix}--password-input-wrapper`}>
       {label}
-      {helper}
       <div
         className={`${prefix}--text-input__field-wrapper`}
         data-invalid={invalid || null}>
@@ -124,20 +127,20 @@ export default function PasswordInput({
         )}
         {input}
       </div>
-      {error}
+      {error ? error : helper}
     </div>
   );
-}
+});
 
 PasswordInput.propTypes = {
   /**
    * Provide a custom className that is applied directly to the underlying
-   * <input> node
+   * `<input>` node
    */
   className: PropTypes.string,
 
   /**
-   * Optionally provide the default value of the <input>
+   * Optionally provide the default value of the `<input>`
    */
   defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
@@ -147,42 +150,24 @@ PasswordInput.propTypes = {
   disabled: PropTypes.bool,
 
   /**
-   * Provide a unique identifier for the input field
+   * Provide text that is used alongside the control label for additional help
    */
-  id: PropTypes.string.isRequired,
-
-  /**
-   * Provide the text that will be read by a screen reader when visiting this
-   * control
-   */
-  labelText: PropTypes.node.isRequired,
-
-  /**
-   * Optionally provide an `onChange` handler that is called whenever <input>
-   * is updated
-   */
-  onChange: PropTypes.func,
-
-  /**
-   * Optionally provide an `onClick` handler that is called whenever the
-   * <input> is clicked
-   */
-  onClick: PropTypes.func,
-
-  /**
-   * Specify the placeholder attribute for the <input>
-   */
-  placeholder: PropTypes.string,
-
-  /**
-   * Provide the current value of the <input>
-   */
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  helperText: PropTypes.node,
 
   /**
    * Specify whether or not the underlying label is visually hidden
    */
   hideLabel: PropTypes.bool,
+
+  /**
+   * "Hide password" tooltip text on password visibility toggle
+   */
+  hidePasswordLabel: PropTypes.string,
+
+  /**
+   * Provide a unique identifier for the input field
+   */
+  id: PropTypes.string.isRequired,
 
   /**
    * Specify whether the control is currently invalid
@@ -195,9 +180,10 @@ PasswordInput.propTypes = {
   invalidText: PropTypes.string,
 
   /**
-   * Provide text that is used alongside the control label for additional help
+   * Provide the text that will be read by a screen reader when visiting this
+   * control
    */
-  helperText: PropTypes.node,
+  labelText: PropTypes.node.isRequired,
 
   /**
    * Specify light version or default version of this control
@@ -205,21 +191,21 @@ PasswordInput.propTypes = {
   light: PropTypes.bool,
 
   /**
-   * Specify the direction of the tooltip for icon-only buttons.
-   * Can be either top, right, bottom, or left.
+   * Optionally provide an `onChange` handler that is called whenever `<input>`
+   * is updated
    */
-  tooltipPosition: PropTypes.oneOf(['top', 'right', 'bottom', 'left']),
+  onChange: PropTypes.func,
 
   /**
-   * Specify the alignment of the tooltip to the icon-only button.
-   * Can be one of: start, center, or end.
+   * Optionally provide an `onClick` handler that is called whenever the
+   * `<input>` is clicked
    */
-  tooltipAlignment: PropTypes.oneOf(['start', 'center', 'end']),
+  onClick: PropTypes.func,
 
   /**
-   * "Hide password" tooltip text on password visibility toggle
+   * Specify the placeholder attribute for the `<input>`
    */
-  hidePasswordLabel: PropTypes.string,
+  placeholder: PropTypes.string,
 
   /**
    * "Show password" tooltip text on password visibility toggle
@@ -230,6 +216,23 @@ PasswordInput.propTypes = {
    * Specify the size of the Text Input. Currently supports either `small` or `large` as an option. If omitted, defaults to standard size
    */
   size: PropTypes.string,
+
+  /**
+   * Specify the alignment of the tooltip to the icon-only button.
+   * Can be one of: start, center, or end.
+   */
+  tooltipAlignment: PropTypes.oneOf(['start', 'center', 'end']),
+
+  /**
+   * Specify the direction of the tooltip for icon-only buttons.
+   * Can be either top, right, bottom, or left.
+   */
+  tooltipPosition: PropTypes.oneOf(['top', 'right', 'bottom', 'left']),
+
+  /**
+   * Provide the current value of the `<input>`
+   */
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 PasswordInput.defaultProps = {
@@ -243,3 +246,5 @@ PasswordInput.defaultProps = {
   light: false,
   size: '',
 };
+
+export default PasswordInput;

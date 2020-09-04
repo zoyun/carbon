@@ -20,6 +20,7 @@ import { defaultItemToString } from './tools/itemToString';
 import { defaultSortItems, defaultCompareItems } from './tools/sorting';
 import { defaultFilterItems } from '../ComboBox/tools/filter';
 import setupGetInstanceId from '../../tools/setupGetInstanceId';
+import { mapDownshiftProps } from '../../tools/createPropAdapter';
 
 const { prefix } = settings;
 
@@ -27,7 +28,6 @@ const getInstanceId = setupGetInstanceId();
 
 export default class FilterableMultiSelect extends React.Component {
   static propTypes = {
-    ...sortingPropTypes,
     /**
      * 'aria-label' of the ListBox component.
      */
@@ -39,61 +39,20 @@ export default class FilterableMultiSelect extends React.Component {
     disabled: PropTypes.bool,
 
     /**
+     * Additional props passed to Downshift
+     */
+    downshiftProps: PropTypes.shape(Downshift.propTypes),
+
+    /**
      * Specify a custom `id`
      */
     id: PropTypes.string.isRequired,
-
-    /**
-     * We try to stay as generic as possible here to allow individuals to pass
-     * in a collection of whatever kind of data structure they prefer
-     */
-    items: PropTypes.array.isRequired,
 
     /**
      * Allow users to pass in arbitrary items from their collection that are
      * pre-selected
      */
     initialSelectedItems: PropTypes.array,
-
-    /**
-     * Helper function passed to downshift that allows the library to render a
-     * given item to a string label. By default, it extracts the `label` field
-     * from a given item to serve as the item label in the list.
-     */
-    itemToString: PropTypes.func,
-
-    /**
-     * Specify the locale of the control. Used for the default `compareItems`
-     * used for sorting the list of items in the control.
-     */
-    locale: PropTypes.string,
-
-    /**
-     * Specify the size of the ListBox. Currently supports either `sm`, `lg` or `xl` as an option.
-     */
-    size: ListBoxPropTypes.ListBoxSize,
-
-    /**
-     * `onChange` is a utility for this controlled component to communicate to a
-     * consuming component what kind of internal state changes are occuring.
-     */
-    onChange: PropTypes.func,
-
-    /**
-     * Generic `placeholder` that will be used as the textual representation of
-     * what this field is for
-     */
-    placeholder: PropTypes.string.isRequired,
-
-    /**
-     * Specify title to show title on hover
-     */
-    useTitleInItem: PropTypes.bool,
-
-    /**
-     * `true` to use the light version.
-     */
-    light: PropTypes.bool,
 
     /**
      * Is the current selection invalid?
@@ -106,9 +65,45 @@ export default class FilterableMultiSelect extends React.Component {
     invalidText: PropTypes.string,
 
     /**
+     * Helper function passed to downshift that allows the library to render a
+     * given item to a string label. By default, it extracts the `label` field
+     * from a given item to serve as the item label in the list.
+     */
+    itemToString: PropTypes.func,
+
+    /**
+     * We try to stay as generic as possible here to allow individuals to pass
+     * in a collection of whatever kind of data structure they prefer
+     */
+    items: PropTypes.array.isRequired,
+
+    /**
+     * `true` to use the light version.
+     */
+    light: PropTypes.bool,
+
+    /**
+     * Specify the locale of the control. Used for the default `compareItems`
+     * used for sorting the list of items in the control.
+     */
+    locale: PropTypes.string,
+
+    /**
+     * `onChange` is a utility for this controlled component to communicate to a
+     * consuming component what kind of internal state changes are occuring.
+     */
+    onChange: PropTypes.func,
+
+    /**
      * Initialize the component with an open(`true`)/closed(`false`) menu.
      */
     open: PropTypes.bool,
+
+    /**
+     * Generic `placeholder` that will be used as the textual representation of
+     * what this field is for
+     */
+    placeholder: PropTypes.string.isRequired,
 
     /**
      * Specify feedback (mode) of the selection.
@@ -119,14 +114,21 @@ export default class FilterableMultiSelect extends React.Component {
     selectionFeedback: PropTypes.oneOf(['top', 'fixed', 'top-after-reopen']),
 
     /**
+     * Specify the size of the ListBox. Currently supports either `sm`, `lg` or `xl` as an option.
+     */
+    size: ListBoxPropTypes.ListBoxSize,
+
+    ...sortingPropTypes,
+
+    /**
      * Callback function for translating ListBoxMenuIcon SVG title
      */
     translateWithId: PropTypes.func,
 
     /**
-     * Additional props passed to Downshift
+     * Specify title to show title on hover
      */
-    downshiftProps: PropTypes.shape(Downshift.propTypes),
+    useTitleInItem: PropTypes.bool,
   };
 
   static getDerivedStateFromProps({ open }, state) {
@@ -160,21 +162,20 @@ export default class FilterableMultiSelect extends React.Component {
     super(props);
     this.filterableMultiSelectInstanceId = getInstanceId();
     this.state = {
-      highlightedIndex: null,
       isOpen: props.open,
       inputValue: '',
       topItems: [],
     };
   }
 
-  handleOnChange = changes => {
+  handleOnChange = (changes) => {
     if (this.props.onChange) {
       this.props.onChange(changes);
     }
   };
 
   handleOnToggleMenu = () => {
-    this.setState(state => ({
+    this.setState((state) => ({
       isOpen: !state.isOpen,
     }));
   };
@@ -229,7 +230,7 @@ export default class FilterableMultiSelect extends React.Component {
     }
   };
 
-  handleOnInputKeyDown = event => {
+  handleOnInputKeyDown = (event) => {
     event.stopPropagation();
   };
 
@@ -248,7 +249,7 @@ export default class FilterableMultiSelect extends React.Component {
       });
   };
 
-  clearInputValue = event => {
+  clearInputValue = (event) => {
     event.stopPropagation();
     this.setState({ inputValue: '' });
     this.inputNode && this.inputNode.focus && this.inputNode.focus();
@@ -295,7 +296,7 @@ export default class FilterableMultiSelect extends React.Component {
     const helperId = !helperText
       ? undefined
       : `filterablemultiselect-helper-text-${this.filterableMultiSelectInstanceId}`;
-    const labelId = `filterablemultiselect-label-${this.filterableMultiSelectInstanceId}`;
+    const labelId = `${id}-label`;
     const titleClasses = cx(`${prefix}--label`, {
       [`${prefix}--label--disabled`]: disabled,
     });
@@ -314,6 +315,7 @@ export default class FilterableMultiSelect extends React.Component {
     ) : null;
     const inputClasses = cx(`${prefix}--text-input`, {
       [`${prefix}--text-input--empty`]: !this.state.inputValue,
+      [`${prefix}--text-input--light`]: light,
     });
     const input = (
       <Selection
@@ -322,18 +324,27 @@ export default class FilterableMultiSelect extends React.Component {
         initialSelectedItems={initialSelectedItems}
         render={({ selectedItems, onItemChange, clearSelection }) => (
           <Downshift
-            {...downshiftProps}
+            {...mapDownshiftProps(downshiftProps)}
             highlightedIndex={highlightedIndex}
+            id={id}
             isOpen={isOpen}
             inputValue={inputValue}
             onInputValueChange={this.handleOnInputValueChange}
-            onChange={onItemChange}
+            onChange={(selectedItem) => {
+              // `selectedItem`: The item that was just selected. null if the selection was cleared.
+              // https://github.com/downshift-js/downshift#onchange
+              if (selectedItem === null) {
+                clearSelection();
+                return;
+              }
+              onItemChange(selectedItem);
+            }}
             itemToString={itemToString}
             onStateChange={this.handleOnStateChange}
             onOuterClick={this.handleOnOuterClick}
-            selectedItem={selectedItems}
-            render={({
-              getButtonProps,
+            selectedItem={selectedItems}>
+            {({
+              getToggleButtonProps,
               getInputProps,
               getItemProps,
               getRootProps,
@@ -355,7 +366,7 @@ export default class FilterableMultiSelect extends React.Component {
                 }
               );
               const buttonProps = {
-                ...getButtonProps({ disabled }),
+                ...getToggleButtonProps({ disabled }),
                 'aria-label': undefined,
               };
               return (
@@ -367,7 +378,7 @@ export default class FilterableMultiSelect extends React.Component {
                   invalidText={invalidText}
                   isOpen={isOpen}
                   size={size}
-                  {...getRootProps({ refKey: 'innerRef' })}>
+                  {...getRootProps()}>
                   <ListBox.Field
                     id={id}
                     disabled={disabled}
@@ -386,7 +397,7 @@ export default class FilterableMultiSelect extends React.Component {
                       className={inputClasses}
                       aria-controls={`${id}__menu`}
                       aria-autocomplete="list"
-                      ref={el => (this.inputNode = el)}
+                      ref={(el) => (this.inputNode = el)}
                       {...getInputProps({
                         disabled,
                         id,
@@ -410,58 +421,64 @@ export default class FilterableMultiSelect extends React.Component {
                       translateWithId={translateWithId}
                     />
                   </ListBox.Field>
-                  <ListBox.Menu aria-label={ariaLabel} id={id}>
-                    {sortItems(
-                      filterItems(items, { itemToString, inputValue }),
-                      {
-                        selectedItems: {
-                          top: selectedItems,
-                          fixed: [],
-                          'top-after-reopen': this.state.topItems,
-                        }[this.props.selectionFeedback],
-                        itemToString,
-                        compareItems,
-                        locale,
-                      }
-                    ).map((item, index) => {
-                      const itemProps = getItemProps({ item });
-                      const itemText = itemToString(item);
-                      const isChecked =
-                        selectedItem.filter(selected => isEqual(selected, item))
-                          .length > 0;
-                      return (
-                        <ListBox.MenuItem
-                          key={itemProps.id}
-                          isActive={isChecked}
-                          isHighlighted={highlightedIndex === index}
-                          title={itemText}
-                          {...itemProps}>
-                          <Checkbox
-                            id={itemProps.id}
-                            title={useTitleInItem ? itemText : null}
-                            name={itemText}
-                            checked={isChecked}
-                            disabled={disabled}
-                            readOnly={true}
-                            tabIndex="-1"
-                            labelText={itemText}
-                          />
-                        </ListBox.MenuItem>
-                      );
-                    })}
-                  </ListBox.Menu>
+                  {isOpen && (
+                    <ListBox.Menu
+                      role="group"
+                      aria-label={ariaLabel}
+                      id={`${id}-menu`}>
+                      {sortItems(
+                        filterItems(items, { itemToString, inputValue }),
+                        {
+                          selectedItems: {
+                            top: selectedItems,
+                            fixed: [],
+                            'top-after-reopen': this.state.topItems,
+                          }[this.props.selectionFeedback],
+                          itemToString,
+                          compareItems,
+                          locale,
+                        }
+                      ).map((item, index) => {
+                        const itemProps = getItemProps({ item });
+                        const itemText = itemToString(item);
+                        const isChecked =
+                          selectedItem.filter((selected) =>
+                            isEqual(selected, item)
+                          ).length > 0;
+                        return (
+                          <ListBox.MenuItem
+                            key={itemProps.id}
+                            isActive={isChecked}
+                            isHighlighted={highlightedIndex === index}
+                            title={itemText}
+                            {...itemProps}>
+                            <Checkbox
+                              id={`${itemProps.id}-item`}
+                              title={useTitleInItem ? itemText : null}
+                              name={itemText}
+                              checked={isChecked}
+                              disabled={disabled}
+                              readOnly={true}
+                              tabIndex="-1"
+                              labelText={itemText}
+                            />
+                          </ListBox.MenuItem>
+                        );
+                      })}
+                    </ListBox.Menu>
+                  )}
                 </ListBox>
               );
             }}
-          />
+          </Downshift>
         )}
       />
     );
     return (
       <div className={wrapperClasses}>
         {title}
-        {!inline && helper}
         {input}
+        {!inline && !invalid ? helper : null}
       </div>
     );
   }

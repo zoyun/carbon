@@ -42,13 +42,29 @@ const capMax = (max, value) =>
 class NumberInput extends Component {
   static propTypes = {
     /**
+     * `true` to allow empty string.
+     */
+    allowEmpty: PropTypes.bool,
+    /**
+     * Provide a description that would be used to best describe the use case of the NumberInput component
+     */
+    ariaLabel: PropTypes.string,
+    /**
      * Specify an optional className to be applied to the wrapper node
      */
     className: PropTypes.string,
     /**
+     * Optional starting value for uncontrolled state
+     */
+    defaultValue: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    /**
      * Specify if the control should be disabled, or not
      */
     disabled: PropTypes.bool,
+    /**
+     * Provide text that is used alongside the control label for additional help
+     */
+    helperText: PropTypes.node,
     /**
      * Specify whether you want the underlying label to be visually hidden
      */
@@ -62,10 +78,26 @@ class NumberInput extends Component {
      */
     id: PropTypes.string.isRequired,
     /**
+     * Specify if the currently value is invalid.
+     */
+    invalid: PropTypes.bool,
+    /**
+     * Message which is displayed if the value is invalid.
+     */
+    invalidText: PropTypes.string,
+    /**
+     * `true` to use the mobile variant.
+     */
+    isMobile: PropTypes.bool,
+    /**
      * Generic `label` that will be used as the textual representation of what
      * this field is for
      */
     label: PropTypes.node,
+    /**
+     * `true` to use the light version.
+     */
+    light: PropTypes.bool,
     /**
      * The maximum value.
      */
@@ -92,57 +124,25 @@ class NumberInput extends Component {
      */
     onClick: PropTypes.func,
     /**
-     * Specify how much the valus should increase/decrease upon clicking on up/down button
-     */
-    step: PropTypes.number,
-    /**
-     * Optional starting value for uncontrolled state
-     */
-    defaultValue: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    /**
-     * Specify the value of the input
-     */
-    value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    /**
      * Specify if the component should be read-only
      */
     readOnly: PropTypes.bool,
     /**
-     * Specify if the currently value is invalid.
+     * Specify the size of the Number Input. Currently supports either `sm` or `xl` as an option.
      */
-    invalid: PropTypes.bool,
+    size: PropTypes.oneOf(['sm', 'xl']),
     /**
-     * Message which is displayed if the value is invalid.
+     * Specify how much the valus should increase/decrease upon clicking on up/down button
      */
-    invalidText: PropTypes.string,
-    /**
-     * Provide text that is used alongside the control label for additional help
-     */
-    helperText: PropTypes.node,
-    /**
-     * Provide a description that would be used to best describe the use case of the NumberInput component
-     */
-    ariaLabel: PropTypes.string,
-    /**
-     * `true` to use the light version.
-     */
-    light: PropTypes.bool,
-    /**
-     * `true` to allow empty string.
-     */
-    allowEmpty: PropTypes.bool,
+    step: PropTypes.number,
     /**
      * Provide custom text for the component for each translation id
      */
     translateWithId: PropTypes.func.isRequired,
     /**
-     * `true` to use the mobile variant.
+     * Specify the value of the input
      */
-    isMobile: PropTypes.bool,
-    /**
-     * Specify the size of the Number Input. Currently supports either `sm` or `xl` as an option.
-     */
-    size: PropTypes.oneOf(['sm', 'xl']),
+    value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   };
 
   static defaultProps = {
@@ -156,7 +156,7 @@ class NumberInput extends Component {
     helperText: '',
     light: false,
     allowEmpty: false,
-    translateWithId: id => defaultTranslations[id],
+    translateWithId: (id) => defaultTranslations[id],
   };
 
   static getDerivedStateFromProps({ min, max, value = 0 }, state) {
@@ -201,7 +201,7 @@ class NumberInput extends Component {
     this.state = { value };
   }
 
-  handleChange = evt => {
+  handleChange = (evt) => {
     const { disabled, onChange } = this.props;
     if (!disabled) {
       evt.persist();
@@ -259,7 +259,7 @@ class NumberInput extends Component {
    * Preserves the DOM node ref of `<input>`.
    * @param {HTMLInputElement} ref The DOM node ref of `<input>`.
    */
-  _handleInputRef = ref => {
+  _handleInputRef = (ref) => {
     this._inputRef = ref;
   };
 
@@ -282,6 +282,7 @@ class NumberInput extends Component {
       ariaLabel,
       light,
       allowEmpty,
+      // eslint-disable-next-line react/prop-types
       innerRef: ref,
       translateWithId: t,
       isMobile,
@@ -318,7 +319,6 @@ class NumberInput extends Component {
 
     const buttonProps = {
       disabled,
-      type: 'button',
     };
 
     const inputWrapperProps = {};
@@ -355,11 +355,16 @@ class NumberInput extends Component {
       );
     }
 
+    const helperTextClasses = classNames(`${prefix}--form__helper-text`, {
+      [`${prefix}--form__helper-text--disabled`]: disabled,
+    });
+
     const helper = helperText ? (
-      <div className={`${prefix}--form__helper-text`}>{helperText}</div>
+      <div className={helperTextClasses}>{helperText}</div>
     ) : null;
 
     const labelClasses = classNames(`${prefix}--label`, {
+      [`${prefix}--label--disabled`]: disabled,
       [`${prefix}--visually-hidden`]: hideLabel,
     });
 
@@ -385,9 +390,10 @@ class NumberInput extends Component {
                   {helper}
                   <div className={`${prefix}--number__input-wrapper`}>
                     <button
+                      type="button"
                       className={`${prefix}--number__control-btn down-icon`}
                       {...buttonProps}
-                      onClick={evt => this.handleArrowClick(evt, 'down')}
+                      onClick={(evt) => this.handleArrowClick(evt, 'down')}
                       title={decrementNumLabel}
                       aria-label={decrementNumLabel || iconDescription}
                       aria-live="polite"
@@ -402,9 +408,10 @@ class NumberInput extends Component {
                       ref={mergeRefs(ref, this._handleInputRef)}
                     />
                     <button
+                      type="button"
                       className={`${prefix}--number__control-btn up-icon`}
                       {...buttonProps}
-                      onClick={evt => this.handleArrowClick(evt, 'up')}
+                      onClick={(evt) => this.handleArrowClick(evt, 'up')}
                       title={incrementNumLabel}
                       aria-label={incrementNumLabel || iconDescription}
                       aria-live="polite"
@@ -418,7 +425,6 @@ class NumberInput extends Component {
             return (
               <>
                 {labelText}
-                {helper}
                 <div className={`${prefix}--number__input-wrapper`}>
                   <input
                     data-invalid={isInputInvalid}
@@ -435,9 +441,10 @@ class NumberInput extends Component {
                   )}
                   <div className={`${prefix}--number__controls`}>
                     <button
+                      type="button"
                       className={`${prefix}--number__control-btn up-icon`}
                       {...buttonProps}
-                      onClick={evt => this.handleArrowClick(evt, 'up')}
+                      onClick={(evt) => this.handleArrowClick(evt, 'up')}
                       title={incrementNumLabel || iconDescription}
                       aria-label={incrementNumLabel || iconDescription}
                       aria-live="polite"
@@ -445,9 +452,10 @@ class NumberInput extends Component {
                       <CaretUpGlyph className="up-icon" />
                     </button>
                     <button
+                      type="button"
                       className={`${prefix}--number__control-btn down-icon`}
                       {...buttonProps}
-                      onClick={evt => this.handleArrowClick(evt, 'down')}
+                      onClick={(evt) => this.handleArrowClick(evt, 'down')}
                       title={decrementNumLabel || iconDescription}
                       aria-label={decrementNumLabel || iconDescription}
                       aria-live="polite"
@@ -456,6 +464,7 @@ class NumberInput extends Component {
                     </button>
                   </div>
                 </div>
+                {isInputInvalid ? null : helper}
               </>
             );
           })()}

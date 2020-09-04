@@ -22,6 +22,7 @@ describe('Carbon Components React', () => {
         "BreadcrumbItem",
         "BreadcrumbSkeleton",
         "Button",
+        "ButtonSet",
         "ButtonSkeleton",
         "Checkbox",
         "CheckboxSkeleton",
@@ -52,6 +53,7 @@ describe('Carbon Components React', () => {
         "FileUploaderItem",
         "FileUploaderSkeleton",
         "Filename",
+        "FluidForm",
         "Form",
         "FormGroup",
         "FormItem",
@@ -90,6 +92,7 @@ describe('Carbon Components React', () => {
         "OverflowMenu",
         "OverflowMenuItem",
         "Pagination",
+        "PaginationNav",
         "PaginationSkeleton",
         "PrimaryButton",
         "ProgressIndicator",
@@ -189,6 +192,10 @@ describe('Carbon Components React', () => {
         "TooltipDefinition",
         "TooltipIcon",
         "UnorderedList",
+        "unstable_PageSelector",
+        "unstable_Pagination",
+        "unstable_TreeNode",
+        "unstable_TreeView",
       ]
     `);
   });

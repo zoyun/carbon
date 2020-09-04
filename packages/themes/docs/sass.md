@@ -77,6 +77,8 @@
   - [✅disabled-03 [variable]](#disabled-03-variable)
   - [✅highlight [variable]](#highlight-variable)
   - [✅decorative-01 [variable]](#decorative-01-variable)
+  - [✅hover-light-ui [variable]](#hover-light-ui-variable)
+  - [✅button-separator [variable]](#button-separator-variable)
   - [✅skeleton-01 [variable]](#skeleton-01-variable)
   - [✅skeleton-02 [variable]](#skeleton-02-variable)
   - [✅⚠️brand-01 [variable]](#brand-01-variable)
@@ -282,6 +284,8 @@ Define theme variables from a map of tokens
   $disabled-03: map-get($theme, 'disabled-03') !global;
   $highlight: map-get($theme, 'highlight') !global;
   $decorative-01: map-get($theme, 'decorative-01') !global;
+  $hover-light-ui: map-get($theme, 'hover-light-ui') !global;
+  $button-separator: map-get($theme, 'button-separator') !global;
   $skeleton-01: map-get($theme, 'skeleton-01') !global;
   $skeleton-02: map-get($theme, 'skeleton-02') !global;
   $brand-01: map-get($theme, 'brand-01') !global;
@@ -589,6 +593,14 @@ Define theme variables from a map of tokens
     $decorative-01: var(
       --#{$custom-property-prefix}-decorative-01,
       map-get($theme, 'decorative-01')
+    ) !global;
+    $hover-light-ui: var(
+      --#{$custom-property-prefix}-hover-light-ui,
+      map-get($theme, 'hover-light-ui')
+    ) !global;
+    $button-separator: var(
+      --#{$custom-property-prefix}-button-separator,
+      map-get($theme, 'button-separator')
     ) !global;
     $skeleton-01: var(
       --#{$custom-property-prefix}-skeleton-01,
@@ -1267,6 +1279,32 @@ Define theme variables from a map of tokens
       @include custom-property(
         'decorative-01',
         map-get($theme, 'decorative-01')
+      );
+    }
+
+    @if should-emit(
+      $theme,
+      $parent-carbon-theme,
+      'hover-light-ui',
+      $emit-difference
+    )
+    {
+      @include custom-property(
+        'hover-light-ui',
+        map-get($theme, 'hover-light-ui')
+      );
+    }
+
+    @if should-emit(
+      $theme,
+      $parent-carbon-theme,
+      'button-separator',
+      $emit-difference
+    )
+    {
+      @include custom-property(
+        'button-separator',
+        map-get($theme, 'button-separator')
       );
     }
 
@@ -2052,6 +2090,8 @@ Define theme variables from a map of tokens
   - [disabled-03 [variable]](#disabled-03-variable)
   - [highlight [variable]](#highlight-variable)
   - [decorative-01 [variable]](#decorative-01-variable)
+  - [hover-light-ui [variable]](#hover-light-ui-variable)
+  - [button-separator [variable]](#button-separator-variable)
   - [skeleton-01 [variable]](#skeleton-01-variable)
   - [skeleton-02 [variable]](#skeleton-02-variable)
   - [brand-01 [variable]](#brand-01-variable)
@@ -2207,6 +2247,8 @@ $carbon--theme--g90: map-merge(
     disabled-03: #a8a8a8,
     highlight: #0043ce,
     decorative-01: #6f6f6f,
+    hover-light-ui: #6f6f6f,
+    button-separator: #161616,
     skeleton-01: #353535,
     skeleton-02: #525252,
     brand-02: #6f6f6f,
@@ -2281,6 +2323,8 @@ $carbon--theme--g100: map-merge(
     disabled-02: #525252,
     highlight: #002d9c,
     decorative-01: #525252,
+    hover-light-ui: #525252,
+    button-separator: #161616,
     skeleton-01: #353535,
     skeleton-02: #393939,
     brand-02: #6f6f6f,
@@ -2361,6 +2405,7 @@ $carbon--theme--v9: map-merge(
     disabled-03: #cdd1d4,
     highlight: #f4f7fb,
     decorative-01: #eef4fc,
+    hover-light-ui: #eef4fc,
     skeleton-01: rgba(61, 112, 178, 0.1),
     skeleton-02: rgba(61, 112, 178, 0.1),
     brand-01: #3d70b2,
@@ -2445,6 +2490,8 @@ $carbon--theme: (
   disabled-03: if(global-variable-exists('disabled-03'), $disabled-03, map-get($carbon--theme--white, 'disabled-03')),
   highlight: if(global-variable-exists('highlight'), $highlight, map-get($carbon--theme--white, 'highlight')),
   decorative-01: if(global-variable-exists('decorative-01'), $decorative-01, map-get($carbon--theme--white, 'decorative-01')),
+  hover-light-ui: if(global-variable-exists('hover-light-ui'), $hover-light-ui, map-get($carbon--theme--white, 'hover-light-ui')),
+  button-separator: if(global-variable-exists('button-separator'), $button-separator, map-get($carbon--theme--white, 'button-separator')),
   skeleton-01: if(global-variable-exists('skeleton-01'), $skeleton-01, map-get($carbon--theme--white, 'skeleton-01')),
   skeleton-02: if(global-variable-exists('skeleton-02'), $skeleton-02, map-get($carbon--theme--white, 'skeleton-02')),
   brand-01: if(global-variable-exists('brand-01'), $brand-01, map-get($carbon--theme--white, 'brand-01')),
@@ -2818,7 +2865,7 @@ $text-02: if(
       'text-02'
     ),
   map-get($carbon--theme, 'text-02'),
-  #393939
+  #525252
 );
 ```
 
@@ -3993,6 +4040,52 @@ $decorative-01: if(
 - **Used by**:
   - [carbon--theme [mixin]](#carbon--theme-mixin)
 
+### ✅hover-light-ui [variable]
+
+<details>
+<summary>Source code</summary>
+
+```scss
+$hover-light-ui: if(
+  global-variable-exists('carbon--theme') and map-has-key(
+      $carbon--theme,
+      'hover-light-ui'
+    ),
+  map-get($carbon--theme, 'hover-light-ui'),
+  #e5e5e5
+);
+```
+
+</details>
+
+- **Group**: [@carbon/themes](#carbonthemes)
+- **Type**: `{undefined}`
+- **Used by**:
+  - [carbon--theme [mixin]](#carbon--theme-mixin)
+
+### ✅button-separator [variable]
+
+<details>
+<summary>Source code</summary>
+
+```scss
+$button-separator: if(
+  global-variable-exists('carbon--theme') and map-has-key(
+      $carbon--theme,
+      'button-separator'
+    ),
+  map-get($carbon--theme, 'button-separator'),
+  #e0e0e0
+);
+```
+
+</details>
+
+- **Group**: [@carbon/themes](#carbonthemes)
+- **Type**: `{undefined}`
+- **Used by**:
+  - [carbon--theme [mixin]](#carbon--theme-mixin)
+
 ### ✅skeleton-01 [variable]
 
 Skeleton state of graphics
@@ -4183,7 +4276,7 @@ $caption-01: if(
   (
     font-size: 0.75rem,
     font-weight: 400,
-    line-height: 1rem,
+    line-height: 1.34,
     letter-spacing: 0.32px,
   )
 );
@@ -4211,7 +4304,7 @@ $label-01: if(
   (
     font-size: 0.75rem,
     font-weight: 400,
-    line-height: 1rem,
+    line-height: 1.34,
     letter-spacing: 0.32px,
   )
 );
@@ -4238,7 +4331,7 @@ $helper-text-01: if(
   map-get($carbon--theme, 'helper-text-01'),
   (
     font-size: 0.75rem,
-    line-height: 1rem,
+    line-height: 1.34,
     letter-spacing: 0.32px,
   )
 );
@@ -4266,7 +4359,7 @@ $body-short-01: if(
   (
     font-size: 0.875rem,
     font-weight: 400,
-    line-height: 1.125rem,
+    line-height: 1.29,
     letter-spacing: 0.16px,
   )
 );
@@ -4294,7 +4387,7 @@ $body-long-01: if(
   (
     font-size: 0.875rem,
     font-weight: 400,
-    line-height: 1.25rem,
+    line-height: 1.43,
     letter-spacing: 0.16px,
   )
 );
@@ -4322,7 +4415,7 @@ $body-short-02: if(
   (
     font-size: 1rem,
     font-weight: 400,
-    line-height: 1.375rem,
+    line-height: 1.375,
     letter-spacing: 0,
   )
 );
@@ -4350,7 +4443,7 @@ $body-long-02: if(
   (
     font-size: 1rem,
     font-weight: 400,
-    line-height: 1.5rem,
+    line-height: 1.5,
     letter-spacing: 0,
   )
 );
@@ -4379,7 +4472,7 @@ $code-01: if(
     font-family: unquote("'IBM Plex Mono', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', Courier, monospace"),
     font-size: 0.75rem,
     font-weight: 400,
-    line-height: 1rem,
+    line-height: 1.34,
     letter-spacing: 0.32px,
   )
 );
@@ -4408,7 +4501,7 @@ $code-02: if(
     font-family: unquote("'IBM Plex Mono', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', Courier, monospace"),
     font-size: 0.875rem,
     font-weight: 400,
-    line-height: 1.25rem,
+    line-height: 1.43,
     letter-spacing: 0.32px,
   )
 );
@@ -4436,7 +4529,7 @@ $heading-01: if(
   (
     font-size: 0.875rem,
     font-weight: 600,
-    line-height: 1.125rem,
+    line-height: 1.29,
     letter-spacing: 0.16px,
   )
 );
@@ -4464,7 +4557,7 @@ $productive-heading-01: if(
   (
     font-size: 0.875rem,
     font-weight: 600,
-    line-height: 1.125rem,
+    line-height: 1.29,
     letter-spacing: 0.16px,
   )
 );
@@ -4492,7 +4585,7 @@ $heading-02: if(
   (
     font-size: 1rem,
     font-weight: 600,
-    line-height: 1.375rem,
+    line-height: 1.375,
     letter-spacing: 0,
   )
 );
@@ -4520,7 +4613,7 @@ $productive-heading-02: if(
   (
     font-size: 1rem,
     font-weight: 600,
-    line-height: 1.375rem,
+    line-height: 1.375,
     letter-spacing: 0,
   )
 );
@@ -4548,7 +4641,7 @@ $productive-heading-03: if(
   (
     font-size: 1.25rem,
     font-weight: 400,
-    line-height: 1.625rem,
+    line-height: 1.4,
     letter-spacing: 0,
   )
 );
@@ -4576,7 +4669,7 @@ $productive-heading-04: if(
   (
     font-size: 1.75rem,
     font-weight: 400,
-    line-height: 2.25rem,
+    line-height: 1.29,
     letter-spacing: 0,
   )
 );
@@ -4604,7 +4697,7 @@ $productive-heading-05: if(
   (
     font-size: 2rem,
     font-weight: 400,
-    line-height: 2.5rem,
+    line-height: 1.25,
     letter-spacing: 0,
   )
 );
@@ -4632,7 +4725,7 @@ $productive-heading-06: if(
   (
     font-size: 2.625rem,
     font-weight: 300,
-    line-height: 3.125rem,
+    line-height: 1.199,
     letter-spacing: 0,
   )
 );
@@ -4660,7 +4753,7 @@ $productive-heading-07: if(
   (
     font-size: 3.375rem,
     font-weight: 300,
-    line-height: 4rem,
+    line-height: 1.19,
     letter-spacing: 0,
   )
 );
@@ -4688,7 +4781,7 @@ $expressive-heading-01: if(
   (
     font-size: 0.875rem,
     font-weight: 600,
-    line-height: 1.25rem,
+    line-height: 1.25,
     letter-spacing: 0.16px,
   )
 );
@@ -4716,7 +4809,7 @@ $expressive-heading-02: if(
   (
     font-size: 1rem,
     font-weight: 600,
-    line-height: 1.5rem,
+    line-height: 1.5,
     letter-spacing: 0,
   )
 );
@@ -4744,12 +4837,12 @@ $expressive-heading-03: if(
   (
     font-size: 1.25rem,
     font-weight: 400,
-    line-height: 130%,
+    line-height: 1.4,
     letter-spacing: 0,
     breakpoints: (
       xlg: (
         font-size: 1.25rem,
-        line-height: 125%,
+        line-height: 1.25,
       ),
       max: (
         font-size: 1.5rem,
@@ -4781,12 +4874,12 @@ $expressive-heading-04: if(
   (
     font-size: 1.75rem,
     font-weight: 400,
-    line-height: 129%,
+    line-height: 1.29,
     letter-spacing: 0,
     breakpoints: (
       xlg: (
         font-size: 1.75rem,
-        line-height: 125%,
+        line-height: 1.25,
       ),
       max: (
         font-size: 2rem,
@@ -4818,31 +4911,30 @@ $expressive-heading-05: if(
   (
     font-size: 2rem,
     font-weight: 400,
-    line-height: 125%,
+    line-height: 1.25,
     letter-spacing: 0,
     breakpoints: (
       md: (
         font-size: 2.25rem,
         font-weight: 300,
-        line-height: 122%,
+        line-height: 1.22,
         letter-spacing: 0,
       ),
       lg: (
         font-size: 2.625rem,
         font-weight: 300,
-        line-height: 119%,
+        line-height: 1.19,
         letter-spacing: 0,
       ),
       xlg: (
         font-size: 3rem,
         font-weight: 300,
-        line-height: 117%,
+        line-height: 1.17,
         letter-spacing: 0,
       ),
       max: (
         font-size: 3.75rem,
         font-weight: 300,
-        line-height: 4.375rem,
         letter-spacing: 0,
       ),
     ),
@@ -4872,31 +4964,30 @@ $expressive-heading-06: if(
   (
     font-size: 2rem,
     font-weight: 600,
-    line-height: 125%,
+    line-height: 1.25,
     letter-spacing: 0,
     breakpoints: (
       md: (
         font-size: 2.25rem,
         font-weight: 600,
-        line-height: 122%,
+        line-height: 1.22,
         letter-spacing: 0,
       ),
       lg: (
         font-size: 2.625rem,
         font-weight: 600,
-        line-height: 119%,
+        line-height: 1.19,
         letter-spacing: 0,
       ),
       xlg: (
         font-size: 3rem,
         font-weight: 600,
-        line-height: 117%,
+        line-height: 1.17,
         letter-spacing: 0,
       ),
       max: (
         font-size: 3.75rem,
         font-weight: 600,
-        line-height: 4.375rem,
         letter-spacing: 0,
       ),
     ),
@@ -4926,15 +5017,15 @@ $expressive-paragraph-01: if(
   (
     font-size: 1.5rem,
     font-weight: 300,
-    line-height: 125%,
+    line-height: 1.25,
     letter-spacing: 0,
     lg: (
       font-size: 1.75rem,
-      line-height: 129%,
+      line-height: 1.29,
     ),
     max: (
       font-size: 2rem,
-      line-height: 125%,
+      line-height: 1.25,
     ),
   )
 );
@@ -4962,7 +5053,7 @@ $quotation-01: if(
   (
     font-size: 1.25rem,
     font-weight: 400,
-    line-height: 130%,
+    line-height: 1.3,
     letter-spacing: 0,
     breakpoints: (
       md: (
@@ -4973,19 +5064,19 @@ $quotation-01: if(
       lg: (
         font-size: 1.5rem,
         font-weight: 400,
-        line-height: 125%,
+        line-height: 1.25,
         letter-spacing: 0,
       ),
       xlg: (
         font-size: 1.75rem,
         font-weight: 400,
-        line-height: 129%,
+        line-height: 1.29,
         letter-spacing: 0,
       ),
       max: (
         font-size: 2rem,
         font-weight: 400,
-        line-height: 125%,
+        line-height: 1.25,
         letter-spacing: 0,
       ),
     ),
@@ -5015,20 +5106,20 @@ $quotation-02: if(
   (
     font-size: 2rem,
     font-weight: 300,
-    line-height: 125%,
+    line-height: 1.25,
     letter-spacing: 0,
     breakpoints: (
       md: (
         font-size: 2.25rem,
-        line-height: 122%,
+        line-height: 1.22,
       ),
       lg: (
         font-size: 2.625rem,
-        line-height: 119%,
+        line-height: 1.19,
       ),
       xlg: (
         font-size: 3rem,
-        line-height: 117%,
+        line-height: 1.17,
       ),
       max: (
         font-size: 3.75rem,
@@ -5060,7 +5151,7 @@ $display-01: if(
   (
     font-size: 2.625rem,
     font-weight: 300,
-    line-height: 119%,
+    line-height: 1.19,
     letter-spacing: 0,
     breakpoints: (
       md: (
@@ -5071,11 +5162,11 @@ $display-01: if(
       ),
       xlg: (
         font-size: 3.75rem,
-        line-height: 117%,
+        line-height: 1.17,
       ),
       max: (
         font-size: 4.75rem,
-        line-height: 113%,
+        line-height: 1.13,
       ),
     ),
   )
@@ -5104,7 +5195,7 @@ $display-02: if(
   (
     font-size: 2.625rem,
     font-weight: 600,
-    line-height: 119%,
+    line-height: 1.19,
     letter-spacing: 0,
     breakpoints: (
       md: (
@@ -5115,11 +5206,11 @@ $display-02: if(
       ),
       xlg: (
         font-size: 3.75rem,
-        line-height: 116%,
+        line-height: 1.16,
       ),
       max: (
         font-size: 4.75rem,
-        line-height: 113%,
+        line-height: 1.13,
       ),
     ),
   )
@@ -5148,25 +5239,25 @@ $display-03: if(
   (
     font-size: 2.625rem,
     font-weight: 300,
-    line-height: 119%,
+    line-height: 1.19,
     letter-spacing: 0,
     breakpoints: (
       md: (
         font-size: 4.25rem,
-        line-height: 115%,
+        line-height: 1.15,
       ),
       lg: (
         font-size: 5.75rem,
-        line-height: 111%,
+        line-height: 1.11,
         letter-spacing: -0.64px,
       ),
       xlg: (
         font-size: 7.625rem,
-        line-height: 107%,
+        line-height: 1.07,
       ),
       max: (
         font-size: 9.75rem,
-        line-height: 105%,
+        line-height: 1.05,
         letter-spacing: -0.96px,
       ),
     ),
@@ -5196,26 +5287,26 @@ $display-04: if(
   (
     font-size: 2.625rem,
     font-weight: 600,
-    line-height: 119%,
+    line-height: 1.19,
     letter-spacing: 0,
     breakpoints: (
       md: (
         font-size: 4.25rem,
-        line-height: 115%,
+        line-height: 1.15,
       ),
       lg: (
         font-size: 5.75rem,
-        line-height: 111%,
+        line-height: 1.11,
         letter-spacing: -0.64px,
       ),
       xlg: (
         font-size: 7.625rem,
-        line-height: 107%,
+        line-height: 1.07,
         letter-spacing: -0.64px,
       ),
       max: (
         font-size: 9.75rem,
-        line-height: 105%,
+        line-height: 1.05,
         letter-spacing: -0.96px,
       ),
     ),
